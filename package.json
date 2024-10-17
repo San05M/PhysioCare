@@ -15,5 +15,9 @@
     "url": "https://github.com/San05M/PhysioCare/issues"
   },
   "homepage": "https://github.com/San05M/PhysioCare#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.1",
+    "mongoose": "^8.7.1"
+  }
 }
