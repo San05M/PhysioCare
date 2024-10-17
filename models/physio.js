@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-let patientsSchema = new mongoose.Schema({
+let physioSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -13,22 +13,18 @@ let patientsSchema = new mongoose.Schema({
     minlength: 2,
     maxlength: 50,
   },
-  birthDate: {
-    type: Date,
-    required: true,
-  },
-  address:{
+  specialty:{
     type: String,
     required: true,
-    maxlength: 100,
+    enum: ['Sports', 'Neurological', 'Pediatric', 'Geriatric', 'Oncological'],
   },
-  insuranceNumber:{
+  licenseNumber:{
     type: String,
     required: true,
     unique: true,
-    match: /^[a-zA-Z0-9]{9}$/
+    match: /^[a-zA-Z0-9]{8}$/
   }
 });
 
-let Patient = mongoose.model('patients', patientsSchema);
-module.exports = Patient;
+let Physio = mongoose.model('physios', physioSchema);
+module.exports = Physio;
