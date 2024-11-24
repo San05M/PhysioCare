@@ -29,6 +29,8 @@ let recordsSchema = new mongoose.Schema({
   patient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "patients",
+    required: true,
+    unique: true
   },
   medicalRecord: {
     type: String,
@@ -38,4 +40,7 @@ let recordsSchema = new mongoose.Schema({
 });
 
 let Record = mongoose.model("records", recordsSchema);
-module.exports = Record;
+/* No es necesario el Appointment, pero lo dejo creado por si más adelante le tengo que dar utilidad. */
+let Appointment = mongoose.model("appointments", appointmentsSchema);
+
+module.exports = { Record, Appointment };

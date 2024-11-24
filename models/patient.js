@@ -31,4 +31,5 @@ let patientsSchema = new mongoose.Schema({
 });
 
 let Patient = mongoose.model('patients', patientsSchema);
+
 module.exports = Patient;
