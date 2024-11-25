@@ -19,7 +19,7 @@ router.post("/login", async (req, res) => {
                   res.status(200).send({result: auth.generarToken(exist[0]._id, exist[0].login, exist[0].rol)});
                 }
                 else {
-                  res.status(401).send({error: "ogin incorrecto"});
+                  res.status(401).send({error: "Login incorrecto"});
                 }
             }
         }).catch(() => {
