@@ -44,7 +44,7 @@ let protegerIdPaciente = () => {
       let result = validarToken(token);
       let idPaciente = req.params.id;
 
-      if (result || (result.rol === "patient" && idPaciente === result.id)) {
+      if (result && (result.rol === "patient" && idPaciente === result.id)) {
         next();
       } else {
         res.status(403).send({ error: "Acceso no autorizado." });

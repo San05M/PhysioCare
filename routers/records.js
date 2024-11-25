@@ -2,7 +2,6 @@ const express = require("express");
 
 let Records = require(__dirname + "/../models/records.js");
 const { protegerRuta, protegerIdPaciente } = require("./../Auth/auth");
-const User = require(__dirname + "/../models/user.js");
 
 let router = express.Router();
 
