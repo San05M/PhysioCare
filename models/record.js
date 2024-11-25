@@ -42,5 +42,5 @@ let recordsSchema = new mongoose.Schema({
 let Record = mongoose.model("records", recordsSchema);
 /* No es necesario el Appointment, pero lo dejo creado por si más adelante le tengo que dar utilidad. */
 let Appointment = mongoose.model("appointments", appointmentsSchema);
-
+ 
 module.exports = { Record, Appointment };
