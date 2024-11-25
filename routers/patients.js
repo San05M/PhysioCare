@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 
 let Patient = require(__dirname + "/../models/patient.js");
-const { protegerIdPaciente, protegerRuta } = require("./../Auth/auth");
+const { protegerIdPaciente, protegerRuta } = require("./../auth/auth");
 const User = require(__dirname + "/../models/user.js");
 
 let router = express.Router();
@@ -26,6 +26,27 @@ router.get("/", protegerRuta(["admin", "physio"]), (req, res) => {
         .status(500) // Error 500. Mensaje indicando el error.
         .send({ ok: false, error: "Error obteniendo pacientes." });
     });
+});
+
+
+/* Buscar un paciente por nombre o apellido */
+router.get("/find", protegerRuta(["admin", "physio"]), (req, res) => {
+  Patient.find({
+    surname: { $regex: req.query.surname, $options: "i" },
+  })
+  .then((resultado) => {
+    if (resultado) res.status(200).send({ result: resultado });
+    else
+    res.status(404).send({
+  ok: false,
+  error: "Error. No se han obtenido pacientes con esos criterios.",
+});
+})
+.catch((error) => {
+  res
+  .status(500)
+  .send({ ok: false, error: error + " Error interno del servidor." });
+});
 });
 
 /* Servicio de listado por id de un paciente en específico */
@@ -54,26 +75,6 @@ router.get(
       });
   }
 );
-
-/* Buscar un paciente por nombre o apellido */
-router.get("/find", protegerRuta(["admin", "physio"]), (req, res) => {
-  Patient.find({
-    surname: { $regex: req.query.surname, $options: "i" },
-  })
-    .then((resultado) => {
-      if (resultado) res.status(200).send({ result: resultado });
-      else
-        res.status(404).send({
-          ok: false,
-          error: "Error. No se han obtenido pacientes con esos criterios.",
-        });
-    })
-    .catch((error) => {
-      res
-        .status(500)
-        .send({ ok: false, error: error + " Error interno del servidor." });
-    });
-});
 
 /* Se añadirá el paciente que se reciba en la petición a la colección de pacientes. */
 router.post("/", protegerRuta(["admin", "physio"]), async (req, res) => {

@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 
 let Physio = require(__dirname + "/../models/physio.js");
-const { protegerRuta } = require("./../Auth/auth");
+const { protegerRuta } = require("./../auth/auth");
 const User = require(__dirname + "/../models/user.js");
 
 let router = express.Router();
@@ -27,6 +27,27 @@ router.get("/", protegerRuta(["admin", "physio", "patient"]), (req, res) => {
         .send({ ok: false, error: "Error obteniendo physio." });
     });
 });
+
+router.get("/find", protegerRuta(["admin", "physio", "patient"]), (req, res) => {
+  console.log(req.query)
+  Physio.find({
+    specialty: { $regex: req.query.specialty },
+  })
+    .then((resultado) => {
+      if (resultado) res.status(200).send({ result: resultado });
+      else
+        res.status(404).send({
+          ok: false,
+          error: "Error. No se han obtenido fisio con esos criterios.",
+        });
+    })
+    .catch((error) => {
+      res
+        .status(500)
+        .send({ ok: false, error: error + " Error interno del servidor." });
+    });
+});
+
 /* Servicio de listado por id de un paciente en específico */
 router.get("/:id", protegerRuta(["admin", "physio", "patient"]), (req, res) => {
   Physio.findById(req.params.id)
@@ -49,7 +70,7 @@ router.get("/:id", protegerRuta(["admin", "physio", "patient"]), (req, res) => {
     });
 });
 
-/* Buscar un paciente por nombre o apellido */
+/* Buscar un physio por nombre o apellido */
 router.get(
   "/find",
   protegerRuta(["admin", "physio", "patient"]),
@@ -73,39 +94,56 @@ router.get(
   }
 );
 
-/* Se añadirá el paciente que se reciba en la petición a la colección de pacientes. */
+/* Se añadirá el physio que se reciba en la petición a la colección de pacientes. */
 router.post("/", protegerRuta(["admin"]), async (req, res) => {
   try {
+    console.log(req.body)
     const hash = bcrypt.hashSync(req.body.password, 10);
-    /* Creación de usuario */
-    let usuario = new Physio({
+
+    let usuario = new User({
       login: req.body.login,
       password: hash,
       rol: "physio",
     });
+
     /* Esperamos a obtener el usuario y se le otorga una id. */
     const usuarioObtenido = await usuario.save();
     /* Creación del id */
     const id = usuarioObtenido._id;
 
-    let nuevoPaciente = new Patient({
-      _id: id,
+    console.log({
+      login: req.body.login,
+      password: hash,
       name: req.body.name,
       surname: req.body.surname,
-      speciality: req.body.speciality,
+      specialty: req.body.specialty,
+      licenseNumber: req.body.licenseNumber,
+      rol: "physio",
+    })
+
+    /* Creación de usuario */
+    let physio = new Physio({
+      _id: id,
+
+      name: req.body.name,
+      surname: req.body.surname,
+      specialty: req.body.specialty,
       licenseNumber: req.body.licenseNumber,
     });
 
-    const resultado = await nuevoPaciente.save();
-    res.status(201).send({ result: resultado });
+    /* Esperamos a obtener el usuario y se le otorga una id. */
+    await physio.save();
+
+    res.status(201).send({ result: physio });
   } catch (error) {
+    console.log(error)
     res
       .status(400)
       .send({ ok: false, error: error + "Error al insertar un physio." });
   }
 });
 
-/* Actualizar los datos a un paciente. Revisar este. */
+/* Actualizar los datos a un physio. Revisar este. */
 router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
   try {
     const resultado = await Physio.findByIdAndUpdate(req.params.id, {
@@ -129,8 +167,7 @@ router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
   }
 });
 
-/* Para borrar un usuario por id. */
-
+/* Para borrar un physio por id. */
 router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
   try {
     await Physio.findByIdAndDelete(req.params.id).then((resultado) => {
@@ -141,7 +178,7 @@ router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
       } else {
         res.status(404).send({
           ok: false,
-          error: "Error. El Physio no existe.",
+          error: "Error. El physio no existe.",
         });
       }
     });
