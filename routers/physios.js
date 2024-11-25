@@ -5,6 +5,8 @@ let Physio = require(__dirname + "/../models/physio.js");
 const { protegerRuta } = require("./../Auth/auth");
 const User = require(__dirname + "/../models/user.js");
 
+let router = express.Router();
+
 /* Obtener un listado de todos los pacientes */
 router.get("/", protegerRuta(["admin", "physio", "patient"]), (req, res) => {
   Physio.find()
@@ -72,7 +74,7 @@ router.get(
 );
 
 /* Se añadirá el paciente que se reciba en la petición a la colección de pacientes. */
-router.post("/", rotegerRuta(["admin"]), async (req, res) => {
+router.post("/", protegerRuta(["admin"]), async (req, res) => {
   try {
     const hash = bcrypt.hashSync(req.body.password, 10);
     /* Creación de usuario */
@@ -148,4 +150,4 @@ router.put("/:id", protegerRuta(["admin"]), async (req, res) => {
   }
 });
 
-let router = express.Router();
+module.exports = router;
