@@ -22,7 +22,10 @@ let protegerRuta = (rol) => {
     if (token) {
       token = token.substring(7);
       let resultado = validarToken(token);
-      if (resultado && (rol === "" || rol.some((res) => res === resultado.rol))) {
+      if (
+        resultado &&
+        (rol === "" || rol.some((res) => res === resultado.rol))
+      ) {
         next();
       } else {
         res.status(403).send({ error: "Acceso no autorizado." });

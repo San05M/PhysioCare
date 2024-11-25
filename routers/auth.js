@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 
-const auth = require(__dirname + "/../auth/auth.js");
+const auth = require("./../Auth/auth");
 const User = require(__dirname + "/../models/user.js");
 
 let router = express.Router();
